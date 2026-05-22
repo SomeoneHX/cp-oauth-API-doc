@@ -43,6 +43,8 @@
       - [POST /api/auth/thirdparty/google/callback](#post-apiauththirdpartygooglecallback)
       - [POST /api/auth/thirdparty/codeforces/callback](#post-apiauththirdpartycodeforcescallback)
       - [POST /api/auth/thirdparty/clist/callback](#post-apiauththirdpartyclistcallback)
+      - [POST /api/auth/thirdparty/leetcode/register/request](#post-apiauththirdpartyleetcoderegisterrequest)
+      - [POST /api/auth/thirdparty/leetcode/register/verify](#post-apiauththirdpartyleetcoderegisterverify)
       - [POST /api/auth/thirdparty/luogu/paste-login](#post-apiauththirdpartyluogupaste-login)
       - [POST /api/auth/thirdparty/luogu/register/request](#post-apiauththirdpartyluoguregisterrequest)
       - [POST /api/auth/thirdparty/luogu/register/verify](#post-apiauththirdpartyluoguregisterverify)
@@ -760,14 +762,21 @@ OIDC Discovery 文档（符合 OpenID Connect Discovery 规范）。
     "cp:summary", "cp:details"
   ],
   "response_types_supported": ["code"],
+  "response_modes_supported": ["query"],
   "grant_types_supported": ["authorization_code", "refresh_token"],
   "token_endpoint_auth_methods_supported": ["client_secret_post", "none"],
+  "revocation_endpoint_auth_methods_supported": ["client_secret_post"],
   "code_challenge_methods_supported": ["S256", "plain"],
+  "subject_types_supported": ["public"],
+  "claim_types_supported": ["normal"],
   "claims_supported": [
     "sub", "username", "display_name", "avatar_url", "bio",
     "email", "email_verified", "linked_accounts",
     "link_scopes", "cp_summary", "cp_details"
-  ]
+  ],
+  "claims_parameter_supported": false,
+  "request_parameter_supported": false,
+  "request_uri_parameter_supported": false
 }
 ```
 
@@ -1031,7 +1040,7 @@ curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." \
 
 ### 1.5 第三方登录（回调）
 
-所有第三方登录回调均使用 `POST` 方法，接收 `code` 和 `state` 参数。
+大部分第三方登录回调使用 `POST` 方法，接收 `code` 和 `state` 参数（Luogu 和 LeetCode 等非标准流程除外）。
 
 #### POST /api/auth/thirdparty/github/callback
 
@@ -1103,6 +1112,68 @@ Clist.by OAuth 回调。使用 PKCE 增强安全。
 curl -X POST https://cpoauth.com/api/auth/thirdparty/clist/callback \
   -H "Content-Type: application/json" \
   -d '{"code":"abc123...","state":"xyz789..."}'
+```
+
+---
+
+#### POST /api/auth/thirdparty/leetcode/register/request
+
+LeetCode 注册第一步：请求验证码。需要 LeetCode 用户名（slug）和 Turnstile。
+
+**请求体**:
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| platformUid | string | 是 | LeetCode 用户名（slug） |
+| turnstileToken | string | 是 | Turnstile 验证令牌 |
+
+**响应 (200)**:
+
+```json
+{
+  "requestId": "a1b2c3d4e5f6...",
+  "code": "CPOAUTH-REG-ABCD1234",
+  "expiresIn": 600
+}
+```
+
+**curl 示例**:
+
+```bash
+curl -X POST https://cpoauth.com/api/auth/thirdparty/leetcode/register/request \
+  -H "Content-Type: application/json" \
+  -d '{"platformUid":"leetcode_user","turnstileToken":"0x..."}'
+```
+
+---
+
+#### POST /api/auth/thirdparty/leetcode/register/verify
+
+LeetCode 注册第二步：验证凭证，创建用户。自动生成 `@leetcode.local` 合成邮箱和用户名。
+
+**请求体**:
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| requestId | string | 是 | 上一步的 requestId |
+| credential | string | 是 | 验证凭证（需在 LeetCode 个人简介中设置） |
+
+**响应 (200)**:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "user": { "id": "clx...", "username": "leetcode_user", ... },
+  "mode": "register"
+}
+```
+
+**curl 示例**:
+
+```bash
+curl -X POST https://cpoauth.com/api/auth/thirdparty/leetcode/register/verify \
+  -H "Content-Type: application/json" \
+  -d '{"requestId":"a1b2c3d4...","credential":"CPOAUTH-REG-ABCD1234"}'
 ```
 
 ---
