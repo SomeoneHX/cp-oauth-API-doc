@@ -4,3 +4,5 @@
 
 本文档依据源码编写，使用了OpenCode辅助。
 基于MkDocs。
+
+[前往Github Pages查看](https://someonehx.github.io/cp-oauth-API-doc/)
