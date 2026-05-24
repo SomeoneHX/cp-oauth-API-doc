@@ -1,5 +1,6 @@
 site_name: CP OAuth API 文档
 site_url: ""
+repo_url: https://github.com/SomeoneHX/cp-oauth-API-doc
 theme:
   name: material
   language: zh
