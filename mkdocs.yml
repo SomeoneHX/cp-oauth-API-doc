@@ -8,9 +8,15 @@ theme:
     - navigation.expand
     - search.highlight
     - content.code.copy
+plugins:
+  - search
 markdown_extensions:
   - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - toc:
       permalink: true
       slugify: !!python/name:pymdownx.slugs.uslugify
