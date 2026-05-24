@@ -1,0 +1,51 @@
+site_name: CP OAuth API 文档
+site_url: ""
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.sections
+    - navigation.expand
+    - search.highlight
+    - content.code.copy
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+      slugify: !!python/name:pymdownx.slugs.uslugify
+nav:
+  - 首页: index.md
+  - 基本信息: basic-information.md
+  - 认证方式:
+    - Auth Session Token: auth-session-token.md
+    - OAuth Access Token: oauth-access-token.md
+    - 管理员权限: admin-privileges.md
+  - 通用 HTTP 状态码: http-status-codes.md
+  - 一、公开 API:
+    - 1.1 站点配置与公共信息: public-config.md
+    - 1.2 用户公开资料: public-users.md
+    - 1.3 用户注册与登录: user-registration-login.md
+    - 1.4 OAuth 2.0 授权: oauth-20-authorization.md
+    - 1.5 第三方登录（回调）: thirdparty-callbacks.md
+    - 1.6 第三方登录启动（条件公开）: thirdparty-start.md
+  - 二、需认证 API:
+    - authenticated-api.md
+    - 2.1 用户信息与管理: user-info-management.md
+    - 2.2 双因素认证 (2FA): two-factor-auth.md
+    - 2.3 Passkey: passkey.md
+    - 2.4 OAuth 客户端管理: oauth-client-management.md
+    - 2.5 OAuth 授权管理: oauth-auth-management.md
+    - 2.6 账号绑定（竞赛平台）: account-binding.md
+  - 三、管理员 API:
+    - admin-api.md
+    - 3.1 用户管理: admin-user-management.md
+    - 3.2 系统配置: admin-system-config.md
+    - 3.3 公告管理: admin-notices.md
+    - 3.4 展示墙管理: admin-showcase.md
+  - 四、OAuth 2.0 授权流程详解:
+    - 可用 Scope 列表: oauth-scopes.md
+    - Authorization Code + PKCE 流程: oauth-pkce-flow.md
+    - Token 刷新（Refresh Token Rotation）: oauth-token-refresh.md
+    - Token 撤销（RFC 7009）: oauth-token-revocation.md
+  - 五、错误码参考: error-codes.md
